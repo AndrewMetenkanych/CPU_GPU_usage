@@ -5,6 +5,10 @@
 #include <WebServer.h>
 #include <ArduinoJson.h>
 
+char ssid[] = "Kavuneva_sich";          //  your network SSID (name)
+char pass[] = "tiaminnitrat";   // your network password
+
+
 #define SCREEN_WIDTH 128
 #define SCREEN_HEIGHT 32
 #define OLED_RESET    -1
@@ -22,7 +26,7 @@ int GPU_Load = 0;
 int GPU_Temperature =0;
 
 
-void UpdateFunc(){
+void handleClient(){
   if (server.hasArg("plain") == false) { 
     server.send(400, "text/plain", "Body not received");
     return;
@@ -50,8 +54,8 @@ void UpdateFunc(){
 }
 
 void setup() {
-  Serial.begin(9600);
-  WiFi.begin("Kavuneva_sich","tiaminnitrat");
+  Serial.begin(115200);
+  WiFi.begin(ssid, pass);
 
   while (WiFi.status() != WL_CONNECTED) {
     delay(1000);
@@ -60,7 +64,7 @@ void setup() {
 
 Serial.println("Connected to WiFi");
 
-server.on("/update", HTTP_POST, UpdateFunc);
+server.on("/update", HTTP_POST, handleClient);
   server.begin();
 
   // Піни для SDA та SCL

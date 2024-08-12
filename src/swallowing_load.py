@@ -29,7 +29,7 @@ def main():
         'gpu_temp': gpu_temp
     }
 # Sending data on ESP32
-    response = requests.post("http://<ESP32_IP_ADDRESS>/update", json=data)
+    response = requests.post("http://192.168.31.79/update", json=data)
     print(response.status_code)
 
 if __name__ == "__main__":
