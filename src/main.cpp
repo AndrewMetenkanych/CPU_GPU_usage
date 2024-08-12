@@ -2,7 +2,8 @@
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
 #include <WiFi.h>
-
+#include <WebServer.h>
+#include <ArduinoJson.h>
 
 /* На потім
 char ssid[] = "Kavuneva_sich";          //  your network SSID (name)

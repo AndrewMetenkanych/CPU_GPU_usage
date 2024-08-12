@@ -1,5 +1,6 @@
 import psutil
 import GPUtil
+import requests
 
 def get_cpu_usage():
     return psutil.cpu_percent(interval=1)
@@ -21,14 +22,15 @@ def main():
     ram_usage = get_ram_usage()
     gpu_load, gpu_temp = get_gpu_load_and_temp()
 
-    print(f"{cpu_usage}")
-    print(f"{ram_usage}")
-
-    if gpu_load is not None and gpu_temp is not None:
-        print(f"{gpu_load:.2f}")
-        print(f"{gpu_temp}")
-    else:
-        print("GPU information not available")
+    data = {
+        'cpu_usage': cpu_usage,
+        'ram_usage': ram_usage,
+        'gpu_load': gpu_load,
+        'gpu_temp': gpu_temp
+    }
+# Sending data on ESP32
+    response = requests.post("http://<ESP32_IP_ADDRESS>/update", json=data)
+    print(response.status_code)
 
 if __name__ == "__main__":
     main()
