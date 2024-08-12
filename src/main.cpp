@@ -5,11 +5,6 @@
 #include <WebServer.h>
 #include <ArduinoJson.h>
 
-/* На потім
-char ssid[] = "Kavuneva_sich";          //  your network SSID (name)
-char pass[] = "tiaminnitrat";   // your network password
-*/
-///////////////////////////////////////////////////////////////////////////////////////////////
 #define SCREEN_WIDTH 128
 #define SCREEN_HEIGHT 32
 #define OLED_RESET    -1
@@ -19,33 +14,74 @@ char pass[] = "tiaminnitrat";   // your network password
 
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 
+WebServer server(80);
+
 int CPU_Load =0;
-int CPU_Temperature = 0;
+int RAM_Load =0;
 int GPU_Load = 0;
 int GPU_Temperature =0;
-int RAM_Load =0;
-int RAM_Temperature =0;
+
+
+void UpdateFunc(){
+  if (server.hasArg("plain") == false) { 
+    server.send(400, "text/plain", "Body not received");
+    return;
+  }
+
+  String body = server.arg("plain");
+  DynamicJsonDocument doc(1024);
+  deserializeJson(doc, body);
+
+  CPU_Load = doc["cpu_usage"];
+  RAM_Load = doc["ram_usage"];
+  GPU_Load = doc["gpu_load"];
+  GPU_Temperature = doc["gpu_temp"];
+
+  // Display update
+  display.clearDisplay();
+  display.setCursor(0, 0);
+  display.print("CPU: "); display.print(CPU_Load); display.println("%");
+  display.print("RAM: "); display.print(RAM_Load); display.println("%");
+  display.print("GPU: "); display.print(GPU_Load); display.print("% ");
+  display.print(GPU_Temperature); display.println("C");
+  display.display();
+
+  server.send(200, "text/plain", "Data updated");
+}
 
 void setup() {
-  // Піни для SDA та SCL
-  Wire.begin(4, 5); // SDA на GPIO 4, SCL на GPIO 5
+  Serial.begin(9600);
+  WiFi.begin("Kavuneva_sich","tiaminnitrat");
 
-  // Ініціалізуємо дисплей
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(1000);
+    Serial.println("Connecting to WiFi...");
+  }
+
+Serial.println("Connected to WiFi");
+
+server.on("/update", HTTP_POST, UpdateFunc);
+  server.begin();
+
+  // Піни для SDA та SCL
+  Wire.begin(4, 5);
+
   if(!display.begin(SSD1306_SWITCHCAPVCC, SCREEN_ADDRESS)) {
     Serial.println(F("Cunt find the device!"));
     for(;;);
   }
+  
 
   display.clearDisplay();
-
   display.setTextSize(1);
   display.setTextColor(SSD1306_WHITE);
   display.setCursor(0, 0);
-  display.println(F("Pile of shit!"));
+  display.println(F("Waiting for data..."));
   display.display();
 }
 
-void loop() {
-  // Основний код
+  void loop() {
+  server.handleClient();
 }
+
 
