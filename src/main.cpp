@@ -75,7 +75,7 @@ server.on("/update", HTTP_POST, handleClient);
     for(;;);
   }
   
-
+//wasd
   display.clearDisplay();
   display.setTextSize(1);
   display.setTextColor(SSD1306_WHITE);
