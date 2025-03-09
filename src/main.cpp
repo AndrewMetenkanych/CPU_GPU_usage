@@ -6,7 +6,7 @@
 #include <WiFiClient.h>
 
 char ssid[] = "Kavuneva_sich";          //  your network SSID (name)
-char pass[] = "tiaminnitrat";   // your network password
+char pass[] = "330room330";   // your network password
 
 #define SCREEN_WIDTH 128
 #define SCREEN_HEIGHT 32
@@ -39,7 +39,7 @@ void setup() {
   Wire.begin(4, 5);
 
   if(!display.begin(SSD1306_SWITCHCAPVCC, SCREEN_ADDRESS)) {
-    Serial.println(F("Cunt find the device!"));
+    Serial.println(F("Can`t find the device!"));
     for(;;);
   }
 
